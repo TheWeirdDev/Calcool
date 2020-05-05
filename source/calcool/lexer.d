@@ -37,11 +37,10 @@ public:
             return Token(TokenType.EOL, "");
         }
         const ch = line[pos];
-        if (isDigit(ch))
-            return Token(TokenType.NUMBER, until!isDigit());
-        else if (isAlpha(ch))
-            return Token(TokenType.FUNC, until!isAlpha());
-
+        if (isDigit(ch)) {
+            return Token(TokenType.NUMBER, number());
+        } else if (isAlpha(ch))
+            return Token(TokenType.FUNC, name());
         pos++;
         switch (ch) {
             import std.conv : to;
@@ -70,10 +69,27 @@ private:
         return line[pos] == '\n' || pos >= line.length - 1;
     }
 
-    string until(alias Pred)() {
+    string name() {
         const start = pos;
-        while (!eol() && Pred(line[pos]))
+        while (!eol() && isAlpha(line[pos]))
             pos++;
+        return line[start .. pos];
+    }
+
+    string number() {
+        const start = pos;
+        bool hadDot = false;
+        while (!eol()) {
+            if (line[pos] == '.') {
+                if (!hadDot)
+                    hadDot = true;
+                else
+                    throw new Exception("Unknown number passed");
+            } else if (!isDigit(line[pos])) {
+                break;
+            }
+            pos++;
+        }
         return line[start .. pos];
     }
 

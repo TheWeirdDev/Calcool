@@ -41,17 +41,18 @@ public:
     }
 
     Token consume() {
-        import std.algorithm : popFront;
+        import std.array : front, popFront;
 
         if (input.length == 0) {
             input = lexer.nextLine();
         }
-
-        return input.popFront();
+        const f = input.front();
+        input.popFront();
+        return f;
     }
 
     Expression parseExpression() {
-        return new NumberParselet().parse(this, lexer.nextLine()[0]);
+        return new NumberParselet().parse(this, consume());
     }
 
 }
