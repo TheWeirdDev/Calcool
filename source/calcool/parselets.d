@@ -96,7 +96,7 @@ class MultDivParselet : InfixParselet {
     }
 
     override Expression parse(Parser p, Expression left, Token token) {
-        auto right = p.parseExpression();
+        auto right = p.parseExpression(Precedence.MULT_AND_DIV);
         switch (token.type) {
         case TokenType.OP_MULT:
             return new OperatorExpression!"*"(left, right);
@@ -114,7 +114,7 @@ class AddMinusParselet : InfixParselet {
     }
 
     override Expression parse(Parser p, Expression left, Token token) {
-        auto right = p.parseExpression();
+        auto right = p.parseExpression(Precedence.ADD_AND_MINUS);
         switch (token.type) {
         case TokenType.OP_ADD:
             return new OperatorExpression!"+"(left, right);
@@ -132,6 +132,6 @@ class PowerParselet : InfixParselet {
     }
 
     override Expression parse(Parser p, Expression left, Token token) {
-        return new OperatorExpression!"^^"(left, p.parseExpression());
+        return new OperatorExpression!"^^"(left, p.parseExpression(Precedence.POWER));
     }
 }
