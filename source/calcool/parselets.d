@@ -5,11 +5,13 @@ import calcool.token;
 import calcool.parser;
 
 enum Precedence : uint {
+    START = 0,
     ADD_AND_MINUS = 1,
     MULT_AND_DIV,
     POWER,
     NAME_AND_NEGATE,
-    FUNC
+    FUNC,
+    GROUP
 }
 
 interface Parselet {
@@ -57,6 +59,37 @@ class NegateParselet : PrefixParselet {
     }
 }
 
+class FuncParselet : PrefixParselet {
+    override Precedence getPrecedence() {
+        return Precedence.FUNC;
+    }
+
+    override Expression parse(Parser p, Token token) {
+        p.expect(TokenType.PR_OPEN);
+        auto param = p.parseGroupExpression();
+        switch (token.value) {
+        case "sin":
+            return new FuncExpression!"sin"(param);
+        case "cos":
+            return new FuncExpression!"cos"(param);
+        case "tan":
+            return new FuncExpression!"tan"(param);
+        default:
+            throw new ParseException("Unknown token for Func parselet");
+        }
+    }
+}
+
+class GroupParselet : PrefixParselet {
+    override Precedence getPrecedence() {
+        return Precedence.GROUP;
+    }
+
+    override Expression parse(Parser p, Token token) {
+        return new GroupExpression(p.parseGroupExpression());
+    }
+}
+
 class MultDivParselet : InfixParselet {
     override Precedence getPrecedence() {
         return Precedence.MULT_AND_DIV;
@@ -100,25 +133,5 @@ class PowerParselet : InfixParselet {
 
     override Expression parse(Parser p, Expression left, Token token) {
         return new OperatorExpression!"^^"(left, p.parseExpression());
-    }
-}
-
-class FuncParselet : PrefixParselet {
-    override Precedence getPrecedence() {
-        return Precedence.FUNC;
-    }
-
-    override Expression parse(Parser p, Token token) {
-        auto param = p.parseExpression();
-        switch (token.value) {
-        case "sin":
-            return new FuncExpression!"sin"(param);
-        case "cos":
-            return new FuncExpression!"cos"(param);
-        case "tan":
-            return new FuncExpression!"tan"(param);
-        default:
-            throw new ParseException("Unknown token for Func parselet");
-        }
     }
 }
