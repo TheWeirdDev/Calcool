@@ -46,6 +46,9 @@ public:
 
         if (input.length == 0) {
             input = lexer.nextLine();
+            if (input.length == 0) {
+                throw new Exception("END OF LINE");
+            }
         }
         const f = input.front();
         input.popFront();
@@ -86,9 +89,12 @@ public:
             const t = input.front().type;
             if (t == TokenType.PR_CLOSE)
                 return Precedence.START;
-            InfixParselet parser = infixParselets[t];
-            if (parser !is null)
+            if (auto parser = t in infixParselets)
                 return parser.getPrecedence();
+            else {
+                consume();
+                throw new ParseException("Invalid syntax");
+            }
         }
         return Precedence.START;
     }
@@ -102,5 +108,20 @@ public:
             throw new ParseException(format("Expected token of type %s", t));
         }
         input.popFront();
+    }
+
+    void run() {
+        while (true) {
+            import std.stdio : writeln, stderr;
+
+            try {
+                parseExpression().evaluate().writeln();
+
+            } catch (ParseException p) {
+                stderr.writefln("Parser error: %s", p.msg);
+            } catch (Exception e) {
+                break;
+            }
+        }
     }
 }

@@ -66,7 +66,7 @@ public:
 
 private:
     pragma(inline, true) bool eol() pure nothrow {
-        return line[pos] == '\n' || pos >= line.length - 1;
+        return line.length == 0 || pos >= line.length - 1 || line[pos] == '\n';
     }
 
     string name() {

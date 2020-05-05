@@ -5,5 +5,5 @@ import calcool.token;
 
 void main() {
 	auto p = new Parser();
-	p.parseExpression().evaluate().writeln();
+	p.run();
 }
