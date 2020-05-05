@@ -18,6 +18,7 @@ public:
     }
 
     Token[] nextLine() {
+        write(">> ");
         line = input.readln();
         pos = 0;
         Token t = next();
@@ -65,7 +66,7 @@ public:
     }
 
 private:
-    pragma(inline, true) bool eol() {
+    pragma(inline, true) bool eol() pure nothrow {
         return line[pos] == '\n' || pos >= line.length - 1;
     }
 
