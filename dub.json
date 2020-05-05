@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"Alireza |S.N|"
+	],
+	"copyright": "Copyright © 2020, Alireza |S.N|",
+	"description": "A terminal based calculator written in D",
+	"license": "GPL-3.0",
+	"name": "calcool"
+}

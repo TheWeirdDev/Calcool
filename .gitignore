@@ -1,0 +1,16 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/calcool
+calcool.so
+calcool.dylib
+calcool.dll
+calcool.a
+calcool.lib
+calcool-test-*
+*-test-*
+*.exe
+*.o
+*.obj
+*.lst
