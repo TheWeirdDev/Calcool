@@ -84,7 +84,7 @@ private:
                 if (!hadDot)
                     hadDot = true;
                 else
-                    throw new Exception("Unknown number passed");
+                    throw new LexerException("Unknown number passed");
             } else if (!isDigit(line[pos])) {
                 break;
             }
@@ -92,5 +92,10 @@ private:
         }
         return line[start .. pos];
     }
+}
 
+public class LexerException : Exception {
+    this(string msg) {
+        super(msg);
+    }
 }

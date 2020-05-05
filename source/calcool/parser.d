@@ -119,6 +119,10 @@ public:
 
             } catch (ParseException p) {
                 stderr.writefln("Parser error: %s", p.msg);
+            } catch (LexerException l) {
+                stderr.writefln("Lexer error: %s", l.msg);
+            } catch (UnsupportedTokenException u) {
+                stderr.writefln(u.msg);
             } catch (Exception e) {
                 break;
             }
