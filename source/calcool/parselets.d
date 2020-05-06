@@ -59,6 +59,16 @@ class NegateParselet : PrefixParselet {
     }
 }
 
+class EolParselet : PrefixParselet {
+    override Precedence getPrecedence() {
+        return Precedence.FUNC;
+    }
+
+    override Expression parse(Parser p, Token token) {
+        return new EolExpression();
+    }
+}
+
 class FuncParselet : PrefixParselet {
     override Precedence getPrecedence() {
         return Precedence.FUNC;

@@ -1,6 +1,7 @@
 module calcool.parser;
 
 import std.stdio;
+import std.array : front, popFront;
 
 import calcool.lexer;
 import calcool.token;
@@ -19,6 +20,7 @@ private:
         prefixParselets[TokenType.OP_MINUS] = new NegateParselet();
         prefixParselets[TokenType.FUNC] = new FuncParselet();
         prefixParselets[TokenType.PR_OPEN] = new GroupParselet();
+        prefixParselets[TokenType.EOL] = new EolParselet();
 
         infixParselets[TokenType.OP_ADD] = infixParselets[TokenType.OP_MINUS] = new AddMinusParselet();
         infixParselets[TokenType.OP_MULT] = infixParselets[TokenType.OP_DIV] = new MultDivParselet();
@@ -42,12 +44,10 @@ public:
     }
 
     Token consume() {
-        import std.array : front, popFront;
-
         if (input.length == 0) {
             input = lexer.nextLine();
             if (input.length == 0) {
-                throw new Exception("END OF LINE");
+                throw new Exception("END OF INPUT");
             }
         }
         const f = input.front();
@@ -78,33 +78,36 @@ public:
             return left;
 
         } else {
+            input.length = 0;
             throw new ParseException("Syntax error");
         }
     }
 
     private Precedence getPrecedence() {
-        import std.array : front;
-
         if (input.length > 0) {
             const t = input.front().type;
-            if (t == TokenType.PR_CLOSE)
+            if (t == TokenType.PR_CLOSE) {
                 return Precedence.START;
-            if (auto parser = t in infixParselets)
-                return parser.getPrecedence();
-            else {
-                consume();
+            }
+
+            if (auto parselet = t in infixParselets) {
+                return parselet.getPrecedence();
+            } else if (t == TokenType.EOL) {
+                return Precedence.START;
+            } else {
+                input.length = 0;
                 throw new ParseException("Invalid syntax");
             }
         }
+
         return Precedence.START;
     }
 
     void expect(TokenType t) {
-        import std.array : front, popFront;
-
         if ((input.length > 0 && input.front().type != t) || input.length == 0) {
             import std.format : format;
 
+            input.length = 0;
             throw new ParseException(format("Expected token of type %s", t));
         }
         input.popFront();
@@ -123,6 +126,8 @@ public:
                 stderr.writefln("Lexer error: %s", l.msg);
             } catch (UnsupportedTokenException u) {
                 stderr.writefln(u.msg);
+            } catch (EolException e) {
+                continue;
             } catch (Exception e) {
                 break;
             }

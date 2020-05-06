@@ -3,6 +3,8 @@ module calcool.expression;
 import std.math;
 import std.algorithm;
 
+import calcool.parselets;
+
 public:
 
 interface Expression {
@@ -16,6 +18,9 @@ class FuncExpression(string FuncName) : Expression
 
     this(Expression p) {
         param = p;
+        if (cast(EolExpression) param) {
+            throw new ParseException("Operand needed");
+        }
     }
 
     override real evaluate() {
@@ -40,6 +45,9 @@ class OperatorExpression(string op) : Expression
 
     private enum str = "left.evaluate()" ~ op ~ "right.evaluate()";
     override real evaluate() {
+        if (cast(EolExpression) right) {
+            throw new ParseException("Operand needed");
+        }
         return mixin(str);
     }
 
@@ -78,7 +86,7 @@ class NumberExpression : Expression {
     override string toString() {
         import std.conv : to;
 
-        return "(" ~ num.to!string ~ ")";
+        return num.to!string;
     }
 }
 
@@ -87,6 +95,9 @@ class NegateExpression : Expression {
 
     this(Expression r) {
         right = r;
+        if (cast(EolExpression) right) {
+            throw new ParseException("Operand needed");
+        }
     }
 
     override real evaluate() {
@@ -95,5 +106,22 @@ class NegateExpression : Expression {
 
     override string toString() {
         return "-" ~ right.toString();
+    }
+}
+
+class EolExpression : Expression {
+
+    override real evaluate() {
+        throw new EolException();
+    }
+
+    override string toString() {
+        return "";
+    }
+}
+
+class EolException : Exception {
+    this() {
+        super("EOL");
     }
 }

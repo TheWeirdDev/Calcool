@@ -20,6 +20,9 @@ public:
     Token[] nextLine() {
         write(">> ");
         line = input.readln();
+        if (line is null) {
+            return [];
+        }
         pos = 0;
         Token t = next();
         Token[] list;
@@ -27,6 +30,7 @@ public:
             list ~= t;
             t = next();
         }
+        list ~= t;
         return list;
     }
 
