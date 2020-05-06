@@ -7,6 +7,7 @@ import calcool.lexer;
 import calcool.token;
 import calcool.expression;
 import calcool.parselets;
+import calcool.exceptions;
 
 public class Parser {
 private:

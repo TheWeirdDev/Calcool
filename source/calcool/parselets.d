@@ -3,6 +3,7 @@ module calcool.parselets;
 import calcool.expression;
 import calcool.token;
 import calcool.parser;
+import calcool.exceptions;
 
 enum Precedence : uint {
     START = 0,
@@ -27,12 +28,6 @@ interface InfixParselet : Parselet {
 }
 
 public:
-class ParseException : Exception {
-    this(string msg) {
-        super(msg);
-    }
-}
-
 class NumberParselet : PrefixParselet {
     override Precedence getPrecedence() {
         return Precedence.NAME_AND_NEGATE;
@@ -61,7 +56,7 @@ class NegateParselet : PrefixParselet {
 
 class EolParselet : PrefixParselet {
     override Precedence getPrecedence() {
-        return Precedence.FUNC;
+        return Precedence.START;
     }
 
     override Expression parse(Parser p, Token token) {
@@ -77,16 +72,7 @@ class FuncParselet : PrefixParselet {
     override Expression parse(Parser p, Token token) {
         p.expect(TokenType.PR_OPEN);
         auto param = p.parseGroupExpression();
-        switch (token.value) {
-        case "sin":
-            return new FuncExpression!"sin"(param);
-        case "cos":
-            return new FuncExpression!"cos"(param);
-        case "tan":
-            return new FuncExpression!"tan"(param);
-        default:
-            throw new ParseException("Unknown token for Func parselet");
-        }
+        return new FuncExpression(token.value, param);
     }
 }
 

@@ -18,11 +18,3 @@ struct Token {
     TokenType type;
     string value;
 }
-
-class UnsupportedTokenException : Exception {
-    this(char t) {
-        import std.format : format;
-
-        super(format("Unsupported token: %c", t));
-    }
-}

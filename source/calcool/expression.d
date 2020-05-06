@@ -3,7 +3,7 @@ module calcool.expression;
 import std.math;
 import std.algorithm;
 
-import calcool.parselets;
+import calcool.exceptions : ParseException;
 
 public:
 
@@ -12,23 +12,44 @@ interface Expression {
     string toString();
 }
 
-class FuncExpression(string FuncName) : Expression
-        if (["sin", "cos", "tan"].canFind(FuncName)) {
+class FuncExpression : Expression {
+private:
     Expression param;
+    string name;
+    static real function(real)[string] funcs;
+    static immutable trigonometry = ["sin", "cos", "tan",];
+    static immutable other = ["sqrt", "floor", "ceil", "log", "log2", "log10"];
 
-    this(Expression p) {
+    shared static this() {
+        static foreach (i; trigonometry ~ other) {
+            funcs[i] = mixin("&" ~ i);
+        }
+    }
+
+public:
+
+    this(string n, Expression p) {
         param = p;
+        name = n;
         if (cast(EolExpression) param) {
             throw new ParseException("Operand needed");
         }
     }
 
     override real evaluate() {
-        return mixin(FuncName ~ "(param.evaluate()*PI/180)");
+        import std.algorithm : canFind;
+
+        if (name in funcs) {
+            if (trigonometry.canFind(name)) {
+                return funcs[name](param.evaluate() * PI / 180);
+            }
+            return funcs[name](param.evaluate());
+        }
+        throw new ParseException("Unknown function call");
     }
 
     override string toString() {
-        return FuncName ~ "(" ~ param.toString() ~ ")";
+        return name ~ "(" ~ param.toString() ~ ")";
     }
 }
 
@@ -41,13 +62,13 @@ class OperatorExpression(string op) : Expression
     this(Expression l, Expression r) {
         left = l;
         right = r;
+        if (cast(EolExpression) right) {
+            throw new ParseException("Operand needed");
+        }
     }
 
     private enum str = "left.evaluate()" ~ op ~ "right.evaluate()";
     override real evaluate() {
-        if (cast(EolExpression) right) {
-            throw new ParseException("Operand needed");
-        }
         return mixin(str);
     }
 
@@ -110,6 +131,7 @@ class NegateExpression : Expression {
 }
 
 class EolExpression : Expression {
+    import calcool.exceptions : EolException;
 
     override real evaluate() {
         throw new EolException();
@@ -117,11 +139,5 @@ class EolExpression : Expression {
 
     override string toString() {
         return "";
-    }
-}
-
-class EolException : Exception {
-    this() {
-        super("EOL");
     }
 }

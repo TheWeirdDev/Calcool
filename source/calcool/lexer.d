@@ -1,7 +1,9 @@
 module calcool.lexer;
 import std.stdio;
 import std.ascii;
+
 import calcool.token;
+import calcool.exceptions;
 
 public class Lexer {
 private:
@@ -75,7 +77,7 @@ private:
 
     string name() {
         const start = pos;
-        while (!eol() && isAlpha(line[pos]))
+        while (!eol() && (isAlpha(line[pos]) || isDigit(line[pos])))
             pos++;
         return line[start .. pos];
     }
@@ -95,11 +97,5 @@ private:
             pos++;
         }
         return line[start .. pos];
-    }
-}
-
-public class LexerException : Exception {
-    this(string msg) {
-        super(msg);
     }
 }
