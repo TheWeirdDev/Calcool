@@ -55,7 +55,7 @@ class NegateParselet : PrefixParselet {
     }
 
     override Expression parse(Parser p, Token token) {
-        return new NegateExpression(p.parseExpression());
+        return new NegateExpression(p.parseExpression(Precedence.NAME_AND_NEGATE));
     }
 }
 
