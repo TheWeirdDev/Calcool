@@ -9,7 +9,7 @@ public:
 
 interface Expression {
     real evaluate();
-    string toString();
+    string toString() @safe const;
 }
 
 class FuncExpression : Expression {
@@ -41,14 +41,17 @@ public:
 
         if (name in funcs) {
             if (trigonometry.canFind(name)) {
-                return funcs[name](param.evaluate() * PI / 180);
+                auto ret = funcs[name](param.evaluate() * PI / 180);
+                if ((ret > 0 && ret < 1.0e-17) || (ret < 0 && ret > -1.0e-17))
+                    ret = 0;
+                return ret;
             }
             return funcs[name](param.evaluate());
         }
         throw new ParseException("Unknown function call");
     }
 
-    override string toString() {
+    override string toString() @safe const {
         return name ~ "(" ~ param.toString() ~ ")";
     }
 }
@@ -72,7 +75,7 @@ class OperatorExpression(string op) : Expression
         return mixin(str);
     }
 
-    override string toString() {
+    override string toString() @safe const {
         return str;
     }
 }
@@ -88,7 +91,7 @@ class GroupExpression : Expression {
         return inside.evaluate();
     }
 
-    override string toString() {
+    override string toString() @safe const {
         return "(" ~ inside.toString() ~ ")";
     }
 }
@@ -104,7 +107,7 @@ class NumberExpression : Expression {
         return num;
     }
 
-    override string toString() {
+    override string toString() @safe const {
         import std.conv : to;
 
         return num.to!string;
@@ -125,7 +128,7 @@ class NegateExpression : Expression {
         return -right.evaluate();
     }
 
-    override string toString() {
+    override string toString() @safe const {
         return "-" ~ right.toString();
     }
 }
@@ -137,7 +140,7 @@ class EolExpression : Expression {
         throw new EolException();
     }
 
-    override string toString() {
+    override string toString() @safe const {
         return "";
     }
 }

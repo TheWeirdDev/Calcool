@@ -71,7 +71,7 @@ public:
     }
 
 private:
-    pragma(inline, true) bool eol() pure nothrow {
+    pragma(inline, true) bool eol() pure nothrow const {
         return line.length == 0 || pos >= line.length - 1 || line[pos] == '\n';
     }
 
