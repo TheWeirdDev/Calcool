@@ -126,7 +126,7 @@ public:
             } catch (LexerException l) {
                 stderr.writefln("Lexer error: %s", l.msg);
             } catch (UnsupportedTokenException u) {
-                stderr.writefln(u.msg);
+                stderr.writeln(u.msg);
             } catch (EolException e) {
                 continue;
             } catch (Exception e) {

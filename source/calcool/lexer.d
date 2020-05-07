@@ -43,7 +43,7 @@ public:
             return Token(TokenType.EOL, "");
         }
         const ch = line[pos];
-        if (isDigit(ch)) {
+        if (isDigit(ch) || ch == '.') {
             return Token(TokenType.NUMBER, number());
         } else if (isAlpha(ch))
             return Token(TokenType.FUNC, name());
@@ -72,7 +72,7 @@ public:
 
 private:
     pragma(inline, true) bool eol() pure nothrow const {
-        return line.length == 0 || pos >= line.length - 1 || line[pos] == '\n';
+        return line.length == 0 || line[pos] == '\n';
     }
 
     string name() {
@@ -96,6 +96,8 @@ private:
             }
             pos++;
         }
+        if (hadDot && (pos - start) == 1)
+            throw new LexerException("Point is not a number");
         return line[start .. pos];
     }
 }
