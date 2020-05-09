@@ -10,7 +10,15 @@ Install `dub` and `ldc` on your system, then run:
 dub --compiler=ldc
 ```
 
+# Usage
+
+```
+Usage: calcool [OPTION] [ARGUMENT]
+        -h : Print this help message
+        -i : Set input file (each expression in a separate line)
+        -c : Calculate the given expression
+```
+
 # License
 
 GPL-3.0+
-

@@ -44,6 +44,11 @@ public:
         lexer = new Lexer(f);
     }
 
+    void setInput(File f) {
+        lexer = new Lexer(f);
+        input.length = 0;
+    }
+
     Token consume() {
         if (input.length == 0) {
             input = lexer.nextLine();
@@ -56,17 +61,13 @@ public:
         return f;
     }
 
-    Expression parseExpression() {
-        return parseExpression(Precedence.START);
-    }
-
     Expression parseGroupExpression() {
         auto inside = parseExpression(Precedence.START);
         expect(TokenType.PR_CLOSE);
         return inside;
     }
 
-    Expression parseExpression(Precedence precedence) {
+    Expression parseExpression(Precedence precedence = Precedence.START) {
         auto token = consume();
         if (auto parselet = token.type in prefixParselets) {
             auto left = parselet.parse(this, token);
@@ -114,24 +115,11 @@ public:
         input.popFront();
     }
 
-    void run() {
-        while (true) {
-            import std.stdio : writeln, stderr;
+    string evaluateFromString(string exp) {
+        import std.conv : to;
 
-            try {
-                parseExpression().evaluate().writeln();
-
-            } catch (ParseException p) {
-                stderr.writefln("Parser error: %s", p.msg);
-            } catch (LexerException l) {
-                stderr.writefln("Lexer error: %s", l.msg);
-            } catch (UnsupportedTokenException u) {
-                stderr.writeln(u.msg);
-            } catch (EolException e) {
-                continue;
-            } catch (Exception e) {
-                break;
-            }
-        }
+        input = lexer.nextLine(exp);
+        return parseExpression().evaluate().to!string;
     }
+
 }

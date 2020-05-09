@@ -19,11 +19,16 @@ public:
         this(stdin);
     }
 
-    Token[] nextLine() {
-        write(">> ");
-        line = input.readln();
-        if (line is null) {
-            return [];
+    Token[] nextLine(string stringInput = null) {
+        if (stringInput is null) {
+            if (input == stdin)
+                write(">> ");
+            line = input.readln();
+            if (line is null) {
+                return [];
+            }
+        } else {
+            line = stringInput ~ '\n';
         }
         pos = 0;
         Token t = next();

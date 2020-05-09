@@ -18,7 +18,13 @@ private:
     string name;
     static real function(real)[string] funcs;
     static immutable trigonometry = ["sin", "cos", "tan",];
-    static immutable other = ["sqrt", "floor", "ceil", "log", "log2", "log10"];
+    static immutable other = [
+        "sqrt", "floor", "ceil", "log", "log2", "log10", "exp"
+    ];
+
+    static real exp(real n) {
+        return E ^^ n;
+    }
 
     shared static this() {
         static foreach (i; trigonometry ~ other) {
