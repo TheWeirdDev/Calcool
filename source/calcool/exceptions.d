@@ -21,6 +21,12 @@ class EolException : Exception {
     }
 }
 
+class EofException : Exception {
+    this(string msg) {
+        super(msg);
+    }
+}
+
 class LexerException : Exception {
     this(string msg) {
         super(msg);

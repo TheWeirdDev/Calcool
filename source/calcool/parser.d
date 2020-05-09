@@ -53,7 +53,7 @@ public:
         if (input.length == 0) {
             input = lexer.nextLine();
             if (input.length == 0) {
-                throw new Exception("END OF INPUT");
+                throw new EofException("END OF INPUT");
             }
         }
         const f = input.front();
