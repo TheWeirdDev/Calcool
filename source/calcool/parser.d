@@ -64,10 +64,6 @@ public:
     Expression parseGroupExpression() {
         auto inside = parseExpression(Precedence.START);
         expect(TokenType.PR_CLOSE);
-        if (input.length > 0 && input.front().type == TokenType.PR_CLOSE) {
-            input.length = 0;
-            throw new ParseException("Syntax error");
-        }
         return inside;
     }
 
