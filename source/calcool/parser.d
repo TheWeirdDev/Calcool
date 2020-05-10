@@ -67,7 +67,11 @@ public:
         return inside;
     }
 
-    Expression parseExpression(Precedence precedence = Precedence.START) {
+    Expression parseExpression() {
+        return parseExpression(Precedence.START, true);
+    }
+
+    Expression parseExpression(Precedence precedence = Precedence.START, bool start = false) {
         auto token = consume();
         if (auto parselet = token.type in prefixParselets) {
             auto left = parselet.parse(this, token);
@@ -76,6 +80,11 @@ public:
                 token = consume();
                 InfixParselet infix = infixParselets[token.type];
                 left = infix.parse(this, left, token);
+            }
+
+            if (start && input.length > 0 && input.front().type != TokenType.EOL) {
+                input.length = 0;
+                throw new ParseException("Syntax error");
             }
             return left;
 
@@ -119,7 +128,7 @@ public:
         import std.conv : to;
 
         input = lexer.nextLine(exp);
-        return parseExpression().evaluate().to!string;
+        return parseExpression(Precedence.START, true).evaluate().to!string;
     }
 
 }
