@@ -73,13 +73,18 @@ class OperatorExpression(string op) : Expression
         }
     }
 
-    private enum str = "left.evaluate()" ~ op ~ "right.evaluate()";
     override real evaluate() {
-        return mixin(str);
+        const rhs = right.evaluate();
+        static if (op == "/") {
+            if (rhs == 0) {
+                throw new ParseException("Devide by zero");
+            }
+        }
+        return mixin("left.evaluate()" ~ op ~ "rhs");
     }
 
     override string toString() @safe const {
-        return str;
+        return left.toString() ~ op ~ right.toString();
     }
 }
 

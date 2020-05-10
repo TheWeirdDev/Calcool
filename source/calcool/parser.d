@@ -35,6 +35,7 @@ private:
 
 public:
     Token[] input;
+    private static const syntaxError = new ParseException("Syntax error");
 
     this() {
         lexer = new Lexer();
@@ -83,15 +84,14 @@ public:
             }
 
             if (start && input.length > 0 && input.front().type != TokenType.EOL) {
-                input.length = 0;
-                throw new ParseException("Syntax error");
+                error();
             }
             return left;
 
         } else {
-            input.length = 0;
-            throw new ParseException("Syntax error");
+            error();
         }
+        assert(false);
     }
 
     private Precedence getPrecedence() {
@@ -106,12 +106,16 @@ public:
             } else if (t == TokenType.EOL) {
                 return Precedence.START;
             } else {
-                input.length = 0;
-                throw new ParseException("Invalid syntax");
+                error();
             }
         }
 
         return Precedence.START;
+    }
+
+    private void error() {
+        input.length = 0;
+        throw syntaxError;
     }
 
     void expect(TokenType t) {
