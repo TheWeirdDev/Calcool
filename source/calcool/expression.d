@@ -26,6 +26,7 @@ private:
         static foreach (i; trigonometry ~ other) {
             funcs[i] = mixin("&" ~ i);
         }
+        funcs["abs"] = &abs!real;
     }
 
 public:
