@@ -22,10 +22,6 @@ private:
         "sqrt", "floor", "ceil", "log", "log2", "log10", "exp"
     ];
 
-    static real exp(real n) {
-        return E ^^ n;
-    }
-
     shared static this() {
         static foreach (i; trigonometry ~ other) {
             funcs[i] = mixin("&" ~ i);
