@@ -19,7 +19,7 @@ public:
         this(stdin);
     }
 
-    Token[] nextLine(string stringInput = null) {
+    Token[] nextLine(in string stringInput = null) {
         if (stringInput is null) {
             if (input == stdin)
                 write(">> ");

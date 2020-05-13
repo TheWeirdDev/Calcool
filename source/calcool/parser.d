@@ -13,20 +13,22 @@ public class Parser {
 private:
     Lexer lexer;
 
-    static PrefixParselet[TokenType] prefixParselets;
-    static InfixParselet[TokenType] infixParselets;
+    static {
+        PrefixParselet[TokenType] prefixParselets;
+        InfixParselet[TokenType] infixParselets;
 
-    static void registerParselets() {
-        prefixParselets[TokenType.NUMBER] = new NumberParselet();
-        prefixParselets[TokenType.OP_MINUS] = new NegateParselet();
-        prefixParselets[TokenType.FUNC] = new FuncParselet();
-        prefixParselets[TokenType.PR_OPEN] = new GroupParselet();
-        prefixParselets[TokenType.EOL] = new EolParselet();
+        void registerParselets() {
+            prefixParselets[TokenType.NUMBER] = new NumberParselet();
+            prefixParselets[TokenType.OP_MINUS] = new NegateParselet();
+            prefixParselets[TokenType.FUNC] = new FuncParselet();
+            prefixParselets[TokenType.PR_OPEN] = new GroupParselet();
+            prefixParselets[TokenType.EOL] = new EolParselet();
 
-        infixParselets[TokenType.OP_ADD] = infixParselets[TokenType.OP_MINUS] = new AddMinusParselet();
-        infixParselets[TokenType.OP_MULT] = infixParselets[TokenType.OP_DIV] = new MultDivParselet();
-        infixParselets[TokenType.OP_POW] = new PowerParselet();
+            infixParselets[TokenType.OP_ADD] = infixParselets[TokenType.OP_MINUS] = new AddMinusParselet();
+            infixParselets[TokenType.OP_MULT] = infixParselets[TokenType.OP_DIV] = new MultDivParselet();
+            infixParselets[TokenType.OP_POW] = new PowerParselet();
 
+        }
     }
 
     shared static this() {
@@ -72,7 +74,7 @@ public:
         return parseExpression(Precedence.START, true);
     }
 
-    Expression parseExpression(Precedence precedence = Precedence.START, bool start = false) {
+    Expression parseExpression(const Precedence precedence = Precedence.START, bool start = false) {
         auto token = consume();
         if (auto parselet = token.type in prefixParselets) {
             auto left = parselet.parse(this, token);
@@ -97,14 +99,12 @@ public:
     private Precedence getPrecedence() {
         if (input.length > 0) {
             const t = input.front().type;
-            if (t == TokenType.PR_CLOSE) {
+            if (t == TokenType.PR_CLOSE || t == TokenType.EOL) {
                 return Precedence.START;
             }
 
             if (auto parselet = t in infixParselets) {
                 return parselet.getPrecedence();
-            } else if (t == TokenType.EOL) {
-                return Precedence.START;
             } else {
                 error();
             }
@@ -118,7 +118,7 @@ public:
         throw syntaxError;
     }
 
-    void expect(TokenType t) {
+    void expect(const TokenType t) {
         if ((input.length > 0 && input.front().type != t) || input.length == 0) {
             import std.format : format;
 
@@ -128,7 +128,7 @@ public:
         input.popFront();
     }
 
-    string evaluateFromString(string exp) {
+    string evaluateFromString(in string exp) {
         import std.conv : to;
 
         input = lexer.nextLine(exp);

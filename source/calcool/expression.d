@@ -8,7 +8,7 @@ import calcool.exceptions : ParseException;
 public:
 
 interface Expression {
-    real evaluate();
+    real evaluate() const;
     string toString() @safe const;
 }
 
@@ -16,11 +16,12 @@ class FuncExpression : Expression {
 private:
     Expression param;
     string name;
-    static real function(real)[string] funcs;
-    static immutable trigonometry = ["sin", "cos", "tan",];
-    static immutable other = [
-        "sqrt", "floor", "ceil", "log", "log2", "log10", "exp"
-    ];
+
+    static immutable {
+        real function(real) pure @safe nothrow @nogc[string] funcs;
+        auto trigonometry = ["sin", "cos", "tan",];
+        auto other = ["sqrt", "floor", "ceil", "log", "log2", "log10", "exp"];
+    }
 
     shared static this() {
         static foreach (i; trigonometry ~ other) {
@@ -39,7 +40,7 @@ public:
         }
     }
 
-    override real evaluate() {
+    override real evaluate() const {
         import std.algorithm : canFind;
 
         if (name in funcs) {
@@ -73,7 +74,7 @@ class OperatorExpression(string op) : Expression
         }
     }
 
-    override real evaluate() {
+    override real evaluate() const {
         const rhs = right.evaluate();
         static if (op == "/") {
             if (rhs == 0) {
@@ -95,7 +96,7 @@ class GroupExpression : Expression {
         inside = i;
     }
 
-    override real evaluate() {
+    override real evaluate() const {
         return inside.evaluate();
     }
 
@@ -111,7 +112,7 @@ class NumberExpression : Expression {
         num = n;
     }
 
-    override real evaluate() {
+    override real evaluate() const {
         return num;
     }
 
@@ -132,7 +133,7 @@ class NegateExpression : Expression {
         }
     }
 
-    override real evaluate() {
+    override real evaluate() const {
         return -right.evaluate();
     }
 
@@ -144,7 +145,7 @@ class NegateExpression : Expression {
 class EolExpression : Expression {
     import calcool.exceptions : EolException;
 
-    override real evaluate() {
+    override real evaluate() const {
         throw new EolException();
     }
 
