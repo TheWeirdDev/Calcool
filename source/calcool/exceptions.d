@@ -1,34 +1,48 @@
 module calcool.exceptions;
 
 public:
-class ParseException : Exception {
-    this(string msg) {
-        super(msg);
-    }
-}
-
-class UnsupportedTokenException : Exception {
-    this(char t) {
+class CalcoolException : Exception {
+    this(string prefix, string msg) {
         import std.format : format;
 
-        super(format("Unsupported token: %c", t));
+        super(format(prefix, msg));
     }
 }
 
-class EolException : Exception {
+class ParseException : CalcoolException {
+    this(string msg) {
+        super("Parser error: %s", msg);
+    }
+}
+
+class LexerException : CalcoolException {
+    this(string msg) {
+        super("Lexer error: %s", msg);
+    }
+}
+
+class UnsupportedTokenException : CalcoolException {
+    this(char t) {
+        import std.conv : to;
+
+        super("Unsupported token: %s", t.to!string);
+    }
+}
+
+class EndException : Exception {
     this() {
-        super("EOL");
+        super("END");
     }
 }
 
-class EofException : Exception {
-    this(string msg) {
-        super(msg);
+class EolException : EndException {
+    this() {
+        super();
     }
 }
 
-class LexerException : Exception {
-    this(string msg) {
-        super(msg);
+class EofException : EndException {
+    this() {
+        super();
     }
 }

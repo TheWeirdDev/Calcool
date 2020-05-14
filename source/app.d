@@ -41,13 +41,8 @@ void run(ref Parser p) {
 	while (true) {
 		try {
 			p.parseExpression().evaluate().writeln();
-
-		} catch (ParseException p) {
-			stderr.writefln("Parser error: %s", p.msg);
-		} catch (LexerException l) {
-			stderr.writefln("Lexer error: %s", l.msg);
-		} catch (UnsupportedTokenException u) {
-			stderr.writeln(u.msg);
+		} catch (CalcoolException ce) {
+			stderr.writeln(ce.msg);
 		} catch (EolException e) {
 			continue;
 		} catch (EofException e) {
@@ -64,21 +59,13 @@ int run(ref Parser p, string input) {
 
 	try {
 		p.evaluateFromString(input).writeln();
-	} catch (ParseException p) {
-		stderr.writefln("Parser error: %s", p.msg);
+	} catch (CalcoolException ce) {
+		stderr.writefln(ce.msg);
 		return 1;
-	} catch (LexerException l) {
-		stderr.writefln("Lexer error: %s", l.msg);
-		return 2;
-	} catch (UnsupportedTokenException u) {
-		stderr.writeln(u.msg);
-		return 3;
-	} catch (EolException e) {
-		return 0;
-	} catch (EofException e) {
+	} catch (EndException e) {
 		return 0;
 	} catch (Exception e) {
-		return 4;
+		return 2;
 	}
 	return 0;
 }
