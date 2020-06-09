@@ -14,25 +14,20 @@ private:
     Lexer lexer;
 
     static {
-        PrefixParselet[TokenType] prefixParselets;
-        InfixParselet[TokenType] infixParselets;
-
-        void registerParselets() {
-            prefixParselets[TokenType.NUMBER] = new NumberParselet();
-            prefixParselets[TokenType.OP_MINUS] = new NegateParselet();
-            prefixParselets[TokenType.FUNC] = new FuncParselet();
-            prefixParselets[TokenType.PR_OPEN] = new GroupParselet();
-            prefixParselets[TokenType.EOL] = new EolParselet();
-
-            infixParselets[TokenType.OP_ADD] = infixParselets[TokenType.OP_MINUS] = new AddMinusParselet();
-            infixParselets[TokenType.OP_MULT] = infixParselets[TokenType.OP_DIV] = new MultDivParselet();
-            infixParselets[TokenType.OP_POW] = new PowerParselet();
-
-        }
+        immutable PrefixParselet[TokenType] prefixParselets;
+        immutable InfixParselet[TokenType] infixParselets;
     }
 
     shared static this() {
-        registerParselets();
+        prefixParselets[TokenType.NUMBER] = new NumberParselet();
+        prefixParselets[TokenType.OP_MINUS] = new NegateParselet();
+        prefixParselets[TokenType.FUNC] = new FuncParselet();
+        prefixParselets[TokenType.PR_OPEN] = new GroupParselet();
+        prefixParselets[TokenType.EOL] = new EolParselet();
+
+        infixParselets[TokenType.OP_ADD] = infixParselets[TokenType.OP_MINUS] = new AddMinusParselet();
+        infixParselets[TokenType.OP_MULT] = infixParselets[TokenType.OP_DIV] = new MultDivParselet();
+        infixParselets[TokenType.OP_POW] = new PowerParselet();
     }
 
 public:
@@ -81,7 +76,7 @@ public:
 
             while (precedence < getPrecedence()) {
                 token = consume();
-                InfixParselet infix = infixParselets[token.type];
+                auto infix = infixParselets[token.type];
                 left = infix.parse(this, left, token);
             }
 

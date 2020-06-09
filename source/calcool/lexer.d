@@ -21,33 +21,31 @@ public:
 
     Token[] nextLine(in string stringInput = null) {
         if (stringInput is null) {
-            if (input == stdin)
+            if (input is stdin)
                 write(">> ");
             line = input.readln();
             if (line is null) {
                 return [];
             }
         } else {
-            line = stringInput ~ '\n';
+            line = stringInput; // ~ '\n';
         }
         pos = 0;
-        Token t = next();
         Token[] list;
-        while (t.type != TokenType.EOL) {
+        for (auto t = next(); t.type != TokenType.EOL; t = next()) {
             list ~= t;
-            t = next();
         }
-        list ~= t;
+        list ~= Token(TokenType.EOL);
         return list;
     }
 
     Token next() {
-        while (!eol() && isWhite(line[pos]))
+        while (!eol() && isWhite(peek()))
             pos++;
         if (eol()) {
-            return Token(TokenType.EOL, "");
+            return Token(TokenType.EOL);
         }
-        const ch = line[pos];
+        const ch = peek();
         if (isDigit(ch) || ch == '.') {
             return Token(TokenType.NUMBER, number());
         } else if (isAlpha(ch))
@@ -76,32 +74,41 @@ public:
     }
 
 private:
-    pragma(inline, true) bool eol() pure nothrow const {
-        return line.length == 0 || line[pos] == '\n';
+    pragma(inline, true) {
+        auto eol() pure nothrow const {
+            return line.length == 0 || pos >= line.length;
+        }
+
+        auto ref peek() {
+            return line[pos];
+        }
     }
 
-    string name() {
+    auto name() {
         const start = pos;
-        while (!eol() && (isAlpha(line[pos]) || isDigit(line[pos])))
+        while (!eol() && (isAlpha(peek()) || isDigit(peek())))
             pos++;
         return line[start .. pos];
     }
 
     string number() {
         const start = pos;
-        bool hadDot = false;
-        while (!eol()) {
-            if (line[pos] == '.') {
-                if (!hadDot)
-                    hadDot = true;
-                else
-                    throw new LexerException("Unknown number passed");
-            } else if (!isDigit(line[pos])) {
-                break;
-            }
+        bool isFloat = false;
+    read_digits:
+        while (!eol() && isDigit(peek())) {
             pos++;
         }
-        if (hadDot && (pos - start) == 1)
+        if (!eol() && peek() == '.') {
+            if (!isFloat) {
+                isFloat = true;
+                pos++;
+                goto read_digits;
+            } else {
+                throw new LexerException("Unknown number passed");
+            }
+        }
+
+        if (isFloat && (pos - start) == 1)
             throw new LexerException("Point is not a number");
         return line[start .. pos];
     }

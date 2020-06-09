@@ -16,24 +16,24 @@ enum Precedence : uint {
 }
 
 interface Parselet {
-    Precedence getPrecedence();
+    Precedence getPrecedence() immutable;
 }
 
 interface PrefixParselet : Parselet {
-    Expression parse(Parser, Token);
+    Expression parse(Parser, Token) immutable;
 }
 
 interface InfixParselet : Parselet {
-    Expression parse(Parser, Expression, Token);
+    Expression parse(Parser, Expression, Token) immutable;
 }
 
 public:
 class NumberParselet : PrefixParselet {
-    override Precedence getPrecedence() {
+    override Precedence getPrecedence() immutable {
         return Precedence.NAME_AND_NEGATE;
     }
 
-    override Expression parse(Parser, Token token) {
+    override Expression parse(Parser, Token token) immutable {
         if (token.type != TokenType.NUMBER) {
             throw new ParseException("Unknown token passed to number parselet");
         }
@@ -45,31 +45,31 @@ class NumberParselet : PrefixParselet {
 }
 
 class NegateParselet : PrefixParselet {
-    override Precedence getPrecedence() {
+    override Precedence getPrecedence() immutable {
         return Precedence.NAME_AND_NEGATE;
     }
 
-    override Expression parse(Parser p, Token token) {
+    override Expression parse(Parser p, Token token) immutable {
         return new NegateExpression(p.parseExpression(Precedence.NAME_AND_NEGATE));
     }
 }
 
 class EolParselet : PrefixParselet {
-    override Precedence getPrecedence() {
+    override Precedence getPrecedence() immutable {
         return Precedence.START;
     }
 
-    override Expression parse(Parser p, Token token) {
+    override Expression parse(Parser p, Token token) immutable {
         return new EolExpression();
     }
 }
 
 class FuncParselet : PrefixParselet {
-    override Precedence getPrecedence() {
+    override Precedence getPrecedence() immutable {
         return Precedence.FUNC;
     }
 
-    override Expression parse(Parser p, Token token) {
+    override Expression parse(Parser p, Token token) immutable {
         p.expect(TokenType.PR_OPEN);
         auto param = p.parseGroupExpression();
         return new FuncExpression(token.value, param);
@@ -77,21 +77,21 @@ class FuncParselet : PrefixParselet {
 }
 
 class GroupParselet : PrefixParselet {
-    override Precedence getPrecedence() {
+    override Precedence getPrecedence() immutable {
         return Precedence.GROUP;
     }
 
-    override Expression parse(Parser p, Token token) {
+    override Expression parse(Parser p, Token token) immutable {
         return new GroupExpression(p.parseGroupExpression());
     }
 }
 
 class MultDivParselet : InfixParselet {
-    override Precedence getPrecedence() {
+    override Precedence getPrecedence() immutable {
         return Precedence.MULT_AND_DIV;
     }
 
-    override Expression parse(Parser p, Expression left, Token token) {
+    override Expression parse(Parser p, Expression left, Token token) immutable {
         auto right = p.parseExpression(Precedence.MULT_AND_DIV);
         switch (token.type) {
         case TokenType.OP_MULT:
@@ -105,11 +105,11 @@ class MultDivParselet : InfixParselet {
 }
 
 class AddMinusParselet : InfixParselet {
-    override Precedence getPrecedence() {
+    override Precedence getPrecedence() immutable {
         return Precedence.ADD_AND_MINUS;
     }
 
-    override Expression parse(Parser p, Expression left, Token token) {
+    override Expression parse(Parser p, Expression left, Token token) immutable {
         auto right = p.parseExpression(Precedence.ADD_AND_MINUS);
         switch (token.type) {
         case TokenType.OP_ADD:
@@ -123,11 +123,11 @@ class AddMinusParselet : InfixParselet {
 }
 
 class PowerParselet : InfixParselet {
-    override Precedence getPrecedence() {
+    override Precedence getPrecedence() immutable {
         return Precedence.POWER;
     }
 
-    override Expression parse(Parser p, Expression left, Token token) {
+    override Expression parse(Parser p, Expression left, Token token) immutable {
         return new OperatorExpression!"^^"(left, p.parseExpression(Precedence.POWER));
     }
 }
