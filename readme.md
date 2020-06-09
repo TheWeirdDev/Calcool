@@ -4,9 +4,15 @@ A terminal based calculator based on pratt's parser and written in D
 
 # How to run?
 
-Install `dub` and `ldc` on your system, then run:
-
+Run it using dub package manager
 ```bash
+dub fetch calcool
+dub run calcool
+```
+
+You can also build this repository
+```bash
+cd Calcool
 dub --compiler=ldc
 ```
 
