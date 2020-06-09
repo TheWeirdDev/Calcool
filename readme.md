@@ -23,9 +23,45 @@ Usage: calcool [OPTION] [ARGUMENT]
 
 ### Use as a library
 
+Add calcool to your dependencies
+
+```json
+"dependencies": {
+    "calcool": "~>1.2.0"
+}
+```
+
+Set its subconfiguration to `Library`
+
+```json
+"configurations": [{
+    "name": "your app's name",
+    "subConfigurations": {
+        "calcool": "Library"
+    }
+}]
+```
+
+Use it in your app
+
 ```d
+import calcool.parser;
+
 auto p = new Prser();
-string result = p.evaluateFromString("sin(45*2) - 22 * -exp(3)");
+
+try {
+    // You can call evaluateFromString as many times as you want
+    string result = p.evaluateFromString("sin(45*2) - 22 * -exp(3)");
+    writeln(result);
+} catch (CalcoolException ce) {
+    // CalcoolException means your expression was not valid
+    stderr.writefln(ce.msg);
+} catch (EndException e) {
+    // Ignore EndException, it only indicates the end of parsing phase, sorry
+} catch (Exception e) {
+    // Something bad happened! Do what you have to do.
+}
+
 ```
 
 # License

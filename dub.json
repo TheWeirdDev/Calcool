@@ -8,12 +8,12 @@
 	"name": "calcool",
 
 	"configurations": [{
-			"name": "cli_app",
+			"name": "Cli_app",
 			"targetType": "executable",
 			"versions": ["CLI_APP"]
 		},
 		{
-			"name": "library",
+			"name": "Library",
 			"targetType": "library",
 			"versions": ["LIBRARY"]
 		}

@@ -1,3 +1,4 @@
+module calcool.app;
 version (CLI_APP) {
 	import std.stdio;
 	import std.getopt;
