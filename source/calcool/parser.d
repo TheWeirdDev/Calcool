@@ -76,7 +76,7 @@ public:
 
             while (precedence < getPrecedence()) {
                 token = consume();
-                auto infix = infixParselets[token.type];
+                immutable infix = infixParselets[token.type];
                 left = infix.parse(this, left, token);
             }
 

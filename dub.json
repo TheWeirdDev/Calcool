@@ -5,5 +5,17 @@
 	"copyright": "Copyright © 2020, Alireza |S.N|",
 	"description": "A terminal based calculator written in D",
 	"license": "GPL-3.0",
-	"name": "calcool"
+	"name": "calcool",
+
+	"configurations": [{
+			"name": "cli_app",
+			"targetType": "executable",
+			"versions": ["CLI_APP"]
+		},
+		{
+			"name": "library",
+			"targetType": "library",
+			"versions": ["LIBRARY"]
+		}
+	]
 }

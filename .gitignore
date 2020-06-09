@@ -9,6 +9,7 @@ calcool.dylib
 calcool.dll
 calcool.a
 calcool.lib
+libcalcool.*
 calcool-test-*
 *-test-*
 *.exe
