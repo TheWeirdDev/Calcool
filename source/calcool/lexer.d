@@ -1,13 +1,13 @@
 module calcool.lexer;
 import std.stdio;
 import std.ascii;
-
 import calcool.token;
 import calcool.exceptions;
 
 public class Lexer {
 private:
     File input;
+
     uint pos = 0;
     string line;
 public:
@@ -21,8 +21,17 @@ public:
 
     Token[] nextLine(in string stringInput = null) {
         if (stringInput is null) {
-            if (input is stdin)
-                write(">> ");
+            if (input is stdin) {
+                version (Posix) {
+                    import core.sys.posix.unistd : isatty;
+
+                    if (isatty(stdin.fileno))
+                        write(">> ");
+                } else {
+                    write(">> ");
+                }
+            }
+
             line = input.readln();
             if (line is null) {
                 return [];
