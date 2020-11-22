@@ -46,8 +46,6 @@ version (CLI_APP) {
 				p.parseExpression().evaluate().writeln();
 			} catch (CalcoolException ce) {
 				stderr.writeln(ce.msg);
-			} catch (EolException e) {
-				continue;
 			} catch (EofException e) {
 				break;
 			} catch (Exception e) {
@@ -65,8 +63,6 @@ version (CLI_APP) {
 		} catch (CalcoolException ce) {
 			stderr.writefln(ce.msg);
 			return 1;
-		} catch (EndException e) {
-			return 0;
 		} catch (Exception e) {
 			return 2;
 		}

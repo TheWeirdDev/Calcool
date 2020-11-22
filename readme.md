@@ -62,8 +62,6 @@ try {
 } catch (CalcoolException ce) {
     // CalcoolException means your expression was not valid
     stderr.writefln(ce.msg);
-} catch (EndException e) {
-    // Ignore EndException, it only indicates the end of parsing phase, sorry
 } catch (Exception e) {
     // Something bad happened! Do what you have to do.
 }

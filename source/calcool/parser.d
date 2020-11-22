@@ -80,7 +80,7 @@ public:
                 left = infix.parse(this, left, token);
             }
 
-            if (start && input.length > 0 && input.front().type != TokenType.EOL) {
+            if (start && input.length > 0 && consume().type != TokenType.EOL) {
                 error();
             }
             return left;
