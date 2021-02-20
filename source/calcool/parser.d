@@ -71,6 +71,9 @@ public:
 
     Expression parseExpression(const Precedence precedence = Precedence.START, bool start = false) {
         auto token = consume();
+        while (start && token.type == TokenType.EOL) {
+            token = consume();
+        }
         if (auto parselet = token.type in prefixParselets) {
             auto left = parselet.parse(this, token);
 

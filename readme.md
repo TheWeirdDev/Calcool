@@ -33,7 +33,7 @@ Add calcool to your dependencies
 
 ```json
 "dependencies": {
-    "calcool": "~>1.2.0"
+    "calcool": "~>1.3.0"
 }
 ```
 

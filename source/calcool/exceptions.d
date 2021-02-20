@@ -30,19 +30,19 @@ class UnsupportedTokenException : CalcoolException {
 }
 
 class EndException : Exception {
-    this() {
-        super("END");
+    this(string message = "END") {
+        super(message);
     }
 }
 
 class EolException : EndException {
     this() {
-        super();
+        super("EOL");
     }
 }
 
 class EofException : EndException {
     this() {
-        super();
+        super("EOF");
     }
 }
