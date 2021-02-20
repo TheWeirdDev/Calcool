@@ -12,10 +12,12 @@ import calcool.exceptions;
 public class Parser {
 private:
     Lexer lexer;
+    Token[] input;
+    static const syntaxError = new ParseException("Syntax error");
 
-    static {
-        immutable PrefixParselet[TokenType] prefixParselets;
-        immutable InfixParselet[TokenType] infixParselets;
+    static immutable {
+        PrefixParselet[TokenType] prefixParselets;
+        InfixParselet[TokenType] infixParselets;
     }
 
     shared static this() {
@@ -31,9 +33,6 @@ private:
     }
 
 public:
-    Token[] input;
-    private static const syntaxError = new ParseException("Syntax error");
-
     this() {
         lexer = new Lexer();
     }
@@ -47,7 +46,7 @@ public:
         input.length = 0;
     }
 
-    Token consume() {
+    private Token consume() {
         if (input.length == 0) {
             input = lexer.nextLine();
             if (input.length == 0) {
