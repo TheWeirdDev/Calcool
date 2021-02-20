@@ -27,6 +27,7 @@ Usage: calcool [OPTION] [ARGUMENT]
         -c : Calculate the given expression
 ```
 
+You can run it without arguments to open an interactive shell.
 ### Use as a library
 
 Add calcool to your dependencies
