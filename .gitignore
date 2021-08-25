@@ -16,3 +16,4 @@ calcool-test-*
 *.o
 *.obj
 *.lst
+*.gdb*
