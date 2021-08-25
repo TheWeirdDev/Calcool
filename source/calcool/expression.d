@@ -2,6 +2,7 @@ module calcool.expression;
 
 import std.math;
 import std.algorithm;
+import std.string;
 
 import calcool.exceptions : ParseException;
 
@@ -19,8 +20,7 @@ private:
 
     static immutable {
         real function(real) pure @safe nothrow @nogc[string] funcs;
-        auto trigonometry = ["sin", "cos", "tan", "asin", "acos", "atan",
-            "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",];
+        auto trigonometry = ["sin", "cos", "tan", "asin", "acos", "atan",];
         auto other = ["sqrt", "floor", "ceil", "log", "log2", "log10", "exp", "round",];
         public auto funcNames() => trigonometry ~ other ~ ["abs"];
     }
@@ -47,9 +47,18 @@ public:
 
         if (name in funcs) {
             if (trigonometry.canFind(name)) {
-                auto ret = funcs[name](param.evaluate() * PI / 180);
+                auto num = param.evaluate();
+                const isArcFunc = name.startsWith('a');
+                if (!isArcFunc) {
+                    num = num * PI / 180;
+                }
+                auto ret = funcs[name](num);
                 if (ret >= -real.epsilon && ret <= real.epsilon)
                     ret = 0;
+                // Convert rad to deg for arc functions
+                if (isArcFunc) {
+                    ret *= 180 / PI;
+                }
                 return ret;
             }
             return funcs[name](param.evaluate());
