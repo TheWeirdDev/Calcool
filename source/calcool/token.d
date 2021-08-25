@@ -3,7 +3,9 @@ module calcool.token;
 public:
 enum TokenType {
     NUMBER,
-    CONSTANT,
+    IDENTIFIER,
+    SET_VAR,
+    EQUALS,
     OP_ADD,
     OP_MINUS,
     OP_MULT,

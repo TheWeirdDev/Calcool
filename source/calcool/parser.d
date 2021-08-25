@@ -10,6 +10,7 @@ import calcool.parselets;
 import calcool.exceptions;
 
 public class Parser {
+    public real[string] variables;
 private:
     Lexer lexer;
     Token[] input;
@@ -22,7 +23,7 @@ private:
 
     shared static this() {
         prefixParselets[TokenType.NUMBER] = new NumberParselet();
-        prefixParselets[TokenType.CONSTANT] = new ConstantParselet();
+        prefixParselets[TokenType.IDENTIFIER] = new IdentifierParselet();
         prefixParselets[TokenType.OP_MINUS] = new NegateParselet();
         prefixParselets[TokenType.FUNC] = new FuncParselet();
         prefixParselets[TokenType.PR_OPEN] = new GroupParselet();
@@ -74,6 +75,18 @@ public:
         while (start && token.type == TokenType.EOL) {
             token = consume();
         }
+
+        if (start && token.type == TokenType.SET_VAR) {
+            const variable = expect(TokenType.IDENTIFIER);
+            expect(TokenType.EQUALS);
+            if (input.front().type == TokenType.EOL) {
+                error();
+            }
+            auto expr = parseExpression(Precedence.START, true);
+            variables[variable.value] = expr.evaluate();
+            return expr;
+        }
+
         if (auto parselet = token.type in prefixParselets) {
             auto left = parselet.parse(this, token);
 
@@ -122,11 +135,13 @@ public:
         return error(new ParseException(format(msg, args)));
     }
 
-    void expect(const TokenType t) {
+    auto expect(const TokenType t) {
         if ((input.length > 0 && input.front().type != t) || input.length == 0) {
             error("Expected token of type %s", t);
         }
+        const res = input.front();
         input.popFront();
+        return res;
     }
 
     string evaluateFromString(in string exp) {

@@ -141,7 +141,7 @@ class ConstantExpression : Expression {
         if (auto constant_value = constant_name in CONSTANTS) {
             return *constant_value;
         }
-        throw new ParseException("Unknown constant");
+        throw new ParseException("Unknown constant or variable");
     }
 
     override string toString() @safe const {

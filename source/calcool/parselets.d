@@ -44,12 +44,15 @@ class NumberParselet : PrefixParselet {
     }
 }
 
-class ConstantParselet : PrefixParselet {
+class IdentifierParselet : PrefixParselet {
     override Precedence getPrecedence() immutable {
         return Precedence.NAME_AND_NEGATE;
     }
 
-    override Expression parse(Parser, Token token) immutable {
+    override Expression parse(Parser p, Token token) immutable {
+        if (auto val = token.value in p.variables) {
+            return new NumberExpression(*val);
+        }
         return new ConstantExpression(token.value);
     }
 }

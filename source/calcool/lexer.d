@@ -3,6 +3,7 @@ import std.stdio;
 import std.ascii;
 import calcool.token;
 import calcool.exceptions;
+import std.conv : to;
 
 public class Lexer {
 private:
@@ -58,30 +59,35 @@ public:
             return Token(TokenType.NUMBER, number());
         } else if (isAlpha(ch)) {
             const identifier = name();
+            if (identifier == "set") {
+                return Token(TokenType.SET_VAR, identifier);
+            }
             skipWhiteSpace();
-            if (peek() == '(') {
+            if (!eol() && peek() == '(') {
                 return Token(TokenType.FUNC, identifier);
             }
-            return Token(TokenType.CONSTANT, identifier);
+            return Token(TokenType.IDENTIFIER, identifier);
         }
         pos++;
-        switch (ch) {
-            import std.conv : to;
 
+        const value = ch.to!string;
+        switch (ch) {
         case '(':
-            return Token(TokenType.PR_OPEN, ch.to!string);
+            return Token(TokenType.PR_OPEN, value);
         case ')':
-            return Token(TokenType.PR_CLOSE, ch.to!string);
+            return Token(TokenType.PR_CLOSE, value);
         case '+':
-            return Token(TokenType.OP_ADD, ch.to!string);
+            return Token(TokenType.OP_ADD, value);
         case '-':
-            return Token(TokenType.OP_MINUS, ch.to!string);
+            return Token(TokenType.OP_MINUS, value);
         case '*':
-            return Token(TokenType.OP_MULT, ch.to!string);
+            return Token(TokenType.OP_MULT, value);
         case '/':
-            return Token(TokenType.OP_DIV, ch.to!string);
+            return Token(TokenType.OP_DIV, value);
         case '^':
-            return Token(TokenType.OP_POW, ch.to!string);
+            return Token(TokenType.OP_POW, value);
+        case '=':
+            return Token(TokenType.EQUALS, value);
         default:
             throw new UnsupportedTokenException(ch);
         }
