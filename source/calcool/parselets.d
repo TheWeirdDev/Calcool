@@ -50,7 +50,7 @@ class IdentifierParselet : PrefixParselet {
     }
 
     override Expression parse(Parser p, Token token) immutable {
-        if (auto val = token.value in p.variables) {
+        if (auto val = token.value in p.getVariables()) {
             return new NumberExpression(*val);
         }
         return new ConstantExpression(token.value);

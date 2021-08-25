@@ -10,8 +10,9 @@ import calcool.parselets;
 import calcool.exceptions;
 
 public class Parser {
-    public real[string] variables;
+
 private:
+    real[string] variables;
     Lexer lexer;
     Token[] input;
     static const syntaxError = new ParseException("Syntax error");
@@ -46,6 +47,10 @@ public:
     void setInput(File f) {
         lexer = new Lexer(f);
         input.length = 0;
+    }
+
+    const auto ref getVariables() {
+        return variables;
     }
 
     private Token consume() {
