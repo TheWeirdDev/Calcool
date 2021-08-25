@@ -119,9 +119,9 @@ private:
     string number() {
         const start = pos;
         bool isFloat = false;
-        bool notFinished = true;
+        bool shouldContinue = true;
 
-        while (notFinished) {
+        while (shouldContinue) {
             while (!eol() && isDigit(peek())) {
                 pos++;
             }
@@ -133,7 +133,7 @@ private:
                     throw new LexerException("Invalid number");
                 }
             } else {
-                notFinished = false;
+                shouldContinue = false;
             }
         }
 
