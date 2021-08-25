@@ -85,7 +85,7 @@ class OperatorExpression(string op) : Expression
     }
 
     override string toString() @safe const {
-        return left.toString() ~ op ~ right.toString();
+        return left.toString() ~ ' ' ~ op[0] ~ ' ' ~ right.toString();
     }
 }
 
