@@ -53,6 +53,10 @@ public:
         return variables;
     }
 
+    void setVariable(string name, real value) {
+        variables[name] = value;
+    }
+
     private Token consume() {
         if (input.length == 0) {
             input = lexer.nextLine();
