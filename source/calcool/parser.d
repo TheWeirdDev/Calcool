@@ -22,6 +22,7 @@ private:
 
     shared static this() {
         prefixParselets[TokenType.NUMBER] = new NumberParselet();
+        prefixParselets[TokenType.CONSTANT] = new ConstantParselet();
         prefixParselets[TokenType.OP_MINUS] = new NegateParselet();
         prefixParselets[TokenType.FUNC] = new FuncParselet();
         prefixParselets[TokenType.PR_OPEN] = new GroupParselet();
@@ -110,17 +111,20 @@ public:
         return Precedence.START;
     }
 
-    private void error() {
+    private noreturn error(const ParseException exception = syntaxError) {
         input.length = 0;
-        throw syntaxError;
+        throw exception;
+    }
+
+    private noreturn error(Args...)(const string msg, Args args) {
+        import std.format : format;
+
+        return error(new ParseException(format(msg, args)));
     }
 
     void expect(const TokenType t) {
         if ((input.length > 0 && input.front().type != t) || input.length == 0) {
-            import std.format : format;
-
-            input.length = 0;
-            throw new ParseException(format("Expected token of type %s", t));
+            error("Expected token of type %s", t);
         }
         input.popFront();
     }

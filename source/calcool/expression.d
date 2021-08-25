@@ -123,6 +123,32 @@ class NumberExpression : Expression {
     }
 }
 
+class ConstantExpression : Expression {
+    private string constant_name;
+    this(string c) {
+        import std.uni : toUpper;
+
+        constant_name = c.toUpper();
+    }
+
+    override real evaluate() const {
+        import std.math.constants;
+
+        immutable CONSTANTS = [
+            "E" : E, "PI" : PI, "INF" : real.infinity, "NAN" : real.nan
+        ];
+
+        if (auto constant_value = constant_name in CONSTANTS) {
+            return *constant_value;
+        }
+        throw new ParseException("Unknown constant");
+    }
+
+    override string toString() @safe const {
+        return constant_name;
+    }
+}
+
 class NegateExpression : Expression {
     private Expression right;
 

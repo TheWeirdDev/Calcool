@@ -49,16 +49,21 @@ public:
     }
 
     Token next() {
-        while (!eol() && isWhite(peek()))
-            pos++;
+        skipWhiteSpace();
         if (eol()) {
             return Token(TokenType.EOL);
         }
         const ch = peek();
         if (isDigit(ch) || ch == '.') {
             return Token(TokenType.NUMBER, number());
-        } else if (isAlpha(ch))
-            return Token(TokenType.FUNC, name());
+        } else if (isAlpha(ch)) {
+            const identifier = name();
+            skipWhiteSpace();
+            if (peek() == '(') {
+                return Token(TokenType.FUNC, identifier);
+            }
+            return Token(TokenType.CONSTANT, identifier);
+        }
         pos++;
         switch (ch) {
             import std.conv : to;
@@ -86,6 +91,11 @@ private:
     pragma(inline, true) {
         auto eol() pure nothrow const {
             return line.length == 0 || pos >= line.length;
+        }
+
+        auto skipWhiteSpace() {
+            while (!eol() && isWhite(peek()))
+                pos++;
         }
 
         auto ref peek() {
