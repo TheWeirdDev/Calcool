@@ -17,3 +17,4 @@ calcool-test-*
 *.obj
 *.lst
 *.gdb*
+.vscode/
