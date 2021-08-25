@@ -48,7 +48,7 @@ public:
         if (name in funcs) {
             if (trigonometry.canFind(name)) {
                 auto ret = funcs[name](param.evaluate() * PI / 180);
-                if (ret > -1.0e-17 && ret < 1.0e-17)
+                if (ret >= -real.epsilon && ret <= real.epsilon)
                     ret = 0;
                 return ret;
             }

@@ -119,17 +119,34 @@ private:
     string number() {
         const start = pos;
         bool isFloat = false;
-    read_digits:
-        while (!eol() && isDigit(peek())) {
-            pos++;
-        }
-        if (!eol() && peek() == '.') {
-            if (!isFloat) {
-                isFloat = true;
+        bool notFinished = true;
+
+        while (notFinished) {
+            while (!eol() && isDigit(peek())) {
                 pos++;
-                goto read_digits;
+            }
+            if (!eol() && peek() == '.') {
+                if (!isFloat) {
+                    isFloat = true;
+                    pos++;
+                } else {
+                    throw new LexerException("Invalid number");
+                }
             } else {
-                throw new LexerException("Unknown number passed");
+                notFinished = false;
+            }
+        }
+
+        if (!eol() && peek() == 'e') {
+            pos++;
+            if (!eol() && (peek() == '+' || peek() == '-')) {
+                pos++;
+            }
+            if (!eol() && !isDigit(peek())) {
+                throw new LexerException("Invalid number");
+            }
+            while (!eol() && isDigit(peek())) {
+                pos++;
             }
         }
 
