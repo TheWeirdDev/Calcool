@@ -54,6 +54,11 @@ public:
     }
 
     void setVariable(string name, real value) {
+        import std.algorithm : canFind;
+
+        if (FuncExpression.funcNames().canFind(name)) {
+            error("Cannot use reserved function name '%s' as a variable", name);
+        }
         variables[name] = value;
     }
 
@@ -92,7 +97,7 @@ public:
                 error();
             }
             auto expr = parseExpression(Precedence.START, true);
-            variables[variable.value] = expr.evaluate();
+            setVariable(variable.value, expr.evaluate());
             return expr;
         }
 

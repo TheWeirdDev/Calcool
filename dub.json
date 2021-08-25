@@ -6,6 +6,7 @@
 	"description": "A terminal based calculator written in D",
 	"license": "GPL-3.0",
 	"name": "calcool",
+	"dflags": ["-preview=shortenedMethods"],
 
 	"configurations": [{
 			"name": "Cli_app",

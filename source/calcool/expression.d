@@ -19,8 +19,10 @@ private:
 
     static immutable {
         real function(real) pure @safe nothrow @nogc[string] funcs;
-        auto trigonometry = ["sin", "cos", "tan",];
-        auto other = ["sqrt", "floor", "ceil", "log", "log2", "log10", "exp"];
+        auto trigonometry = ["sin", "cos", "tan", "asin", "acos", "atan",
+            "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",];
+        auto other = ["sqrt", "floor", "ceil", "log", "log2", "log10", "exp", "round",];
+        public auto funcNames() => trigonometry ~ other ~ ["abs"];
     }
 
     shared static this() {
@@ -52,7 +54,7 @@ public:
             }
             return funcs[name](param.evaluate());
         }
-        throw new ParseException("Unknown function call");
+        throw new ParseException("Unknown function was called");
     }
 
     override string toString() @safe const {
